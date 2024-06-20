@@ -9,7 +9,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import {Formik} from 'formik';
-import {LoginSchema} from '../schemas/LoginSchema';
+import {LoginSchema} from './schemas/LoginSchema';
 
 const LoginScreen = ({navigation}) => {
   return (
@@ -74,7 +74,7 @@ const LoginScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#FFE4E1',
   },
   container: {
     flex: 1,
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   linkText: {
-    color: '#03dac6',
+    color: '#000',
     fontSize: 16,
     fontWeight: 'bold',
   },
