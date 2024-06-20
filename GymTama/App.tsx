@@ -23,7 +23,7 @@ const App = () => {
         <Stack.Screen
           name="Welcome"
           component={WelcomeScreen}
-          options={{headerShown: false}} // Hide the header for this screen
+          options={{headerShown: false}}
         />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
@@ -38,7 +38,7 @@ const App = () => {
 };
 
 const WelcomeScreen = () => {
-  const navigation = useNavigation(); // Hook to get navigation object
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.container}>

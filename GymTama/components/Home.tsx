@@ -1,27 +1,115 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  PanResponder,
+  TouchableOpacity,
+} from 'react-native';
+import ActiveTabs from './infoDisplays/ActiveTabs';
+import {Directions} from 'react-native-gesture-handler';
+import DoubleTap from './functions/gesture/DoubleTap';
+
+const TABS = [
+  'Stats',
+  'WorkoutSchedule',
+  'WorkoutLogs',
+  'Macro',
+  'Calories',
+  'StepCounter',
+  'Scanner',
+];
 
 const Home = () => {
-  return (
-    <>
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          <View style={styles.square}>
-            <Text style={styles.text}>avatar placement</Text>
-          </View>
-          <View style={styles.separator}></View>
+  const [activeTab, setActiveTab] = useState('Stats');
+  const [isFullDetail, setIsFullDetail] = useState(false);
 
-          <View style={styles.display}>
-            <Text style={styles.text}>
-              Live active tabs with gesture features
-            </Text>
-          </View>
+  const handleSwipes = (directions: string) => {
+    const currentIndex = TABS.indexOf(activeTab);
+    if (directions === 'left' && currentIndex < TABS.length - 1) {
+      setActiveTab(TABS[currentIndex + 1]);
+    } else if (directions === 'right' && currentIndex > 0) {
+      setActiveTab(TABS[currentIndex - 1]);
+    }
+  };
+
+  // const handleGestureEvent = (event: {
+  //   nativeEvent: {translationx: number; translationy: number};
+  // }) => {
+  //   if (event.nativeEvent.translationx < -50) {
+  //     handleSwipes('left');
+  //   } else if (event.nativeEvent.translationy > 50) {
+  //     handleSwipes('right');
+  //   }
+  // };
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, gestureState) =>
+        Math.abs(gestureState.dx) > Math.abs(gestureState.dy) &&
+        Math.abs(gestureState.dx) > 10,
+      onPanResponderRelease: (_, gestureState) => {
+        if (gestureState.dx < -50) {
+          handleSwipes('left');
+        } else if (gestureState.dx > 50) {
+          handleSwipes('right');
+        }
+      },
+    }),
+  ).current;
+
+  const handleDoubleTap = () => {
+    setIsFullDetail(!isFullDetail);
+  };
+
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
+  const onScrollBeginDrag = () => {
+    setScrollEnabled(true);
+  };
+
+  const onPanResponderGrant = () => {
+    setScrollEnabled(false);
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.square}>
+          <Text style={styles.text}>avatar placement</Text>
         </View>
-      </SafeAreaView>
-    </>
+        <View style={styles.separator}></View>
+
+        <ScrollView
+          horizontal
+          style={styles.tabBar}
+          scrollEnabled={scrollEnabled}
+          onScrollBeginDrag={onScrollBeginDrag}>
+          {TABS.map(tabs => (
+            <TouchableOpacity
+              key={tabs}
+              onPress={() => setActiveTab(tabs)}
+              style={styles.tabButton}>
+              <Text style={styles.text}>{tabs}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <DoubleTap
+          onDoubleTap={handleDoubleTap}
+          style={styles.display}
+          {...panResponder.panHandlers}
+          onPanResponderGrant={onPanResponderGrant}>
+          <ActiveTabs activeTab={activeTab} isFullDetail={isFullDetail} />
+        </DoubleTap>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -35,10 +123,6 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     backgroundColor: '#FFE4E1',
-  },
-  grid: {
-    width: '100%',
-    paddingVertical: 10,
   },
   text: {
     fontSize: 18,
@@ -67,31 +151,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#333',
     marginVertical: 10,
   },
-  row: {
+  tabBar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
+    margin: 10,
   },
-  box: {
-    backgroundColor: '#B0C4DE',
-    margin: 2,
-    borderRadius: 10,
-  },
-  largeBox: {
-    height: 90,
-    marginBottom: -10,
-    borderRadius: 10,
-  },
-  mediumBox: {
-    flex: 1,
-    height: 100,
-    marginHorizontal: 2,
-    borderRadius: 10,
-  },
-  smallBox: {
-    width: '30%',
-    height: 100,
-    borderRadius: 10,
+  tabButton: {
+    marginRight: 10,
+    padding: 10,
+    backgroundColor: '#add8e6',
+    borderRadius: 5,
   },
 });
 
